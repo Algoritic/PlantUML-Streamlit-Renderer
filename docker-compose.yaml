@@ -1,0 +1,21 @@
+services:
+  # PlantUML Server Service
+  plantuml-server:
+    image: plantuml/plantuml
+    container_name: plantuml-server
+    ports:
+      - "8080:8080" # Map host port 8080 to container port 8080
+    restart: always
+
+  # Streamlit App Service
+  streamlit-app:
+    build: . # Build from the Dockerfile in the current directory
+    container_name: plantuml-streamlit-app
+    ports:
+      - "8501:8501" # Map host port 8501 to container port 8501 (Streamlit's default)
+    environment:
+      # This links to the plantuml-server service within the Docker network
+      PLANTUML_SERVER_URL: http://plantuml-server:8080
+    depends_on:
+      - plantuml-server # Ensure plantuml-server starts before streamlit-app
+    restart: always
